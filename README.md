@@ -1,39 +1,34 @@
-<!--
-This README describes the package. If you publish this package to pub.dev,
-this README's contents appear on the landing page for your package.
-
-For information about how to write a good package README, see the guide for
-[writing package pages](https://dart.dev/guides/libraries/writing-package-pages).
-
-For general information about developing packages, see the Dart guide for
-[creating packages](https://dart.dev/guides/libraries/create-library-packages)
-and the Flutter guide for
-[developing packages and plugins](https://flutter.dev/developing-packages).
--->
-
-TODO: Put a short description of the package here that helps potential users
-know whether this package might be useful for them.
+Converts Dart Image Library `Image`s to `InputImage`s suitable for processing with `google_ml_kit` on Android and iOS.
 
 ## Features
 
-TODO: List what your package can do. Maybe include images, gifs, or videos.
+Converts to BGRA8888 format on iOS, and NV21 format on Android, as required by the respective ML Kit implementations on each platform.
+Allows the user to specify an orientation for the image, which is passed through to ML Kit as metadata.
 
 ## Getting started
 
-TODO: List prerequisites and provide or point to information on how to
-start using the package.
+Import the [Dart Image Library](https://pub.dev/packages/image) and one of the [google_ml_kit](https://pub.dev/packages/google_ml_kit) plugins.
 
 ## Usage
 
-TODO: Include short and useful examples for package users. Add longer examples
-to `/example` folder.
-
 ```dart
-const like = 'sample';
+import 'package:image/image.dart' as img;
+import 'package:google_mlkit_image_labeling/google_mlkit_image_labeling.dart';
+
+// set up an image labeler (but we could use any google_ml_kit package)
+final ImageLabelerOptions options = ImageLabelerOptions(confidenceThreshold: 0.5);
+final imageLabeler = ImageLabeler(options: options);
+
+// make an Image from a local jpg
+img.Image? image = await img.decodeJpgFile(path);
+// this jpg is oriented 90 degrees clockwise, so let ml kit know
+ImageInput mlImage = ImageMlkitConverter.imageToMlkitInputImage(image!, InputImageRotation.rotation90deg);
+// run ml kit labeler
+final List<ImageLabel> labels = await imageLabeler.processImage(inputImage);
+
+for (ImageLabel label in labels) {
+  final String text = label.label;
+  final int index = label.index;
+  final double confidence = label.confidence;
+}
 ```
-
-## Additional information
-
-TODO: Tell users more about the package: where to find more information, how to
-contribute to the package, how to file issues, what response they can expect
-from the package authors, and more.
