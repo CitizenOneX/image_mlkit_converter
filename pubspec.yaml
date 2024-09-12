@@ -1,7 +1,7 @@
 name: image_mlkit_converter
 description: "Converter from Dart Image Library Image objects to google_mlkit_commons InputImage objects"
 version: 0.0.1
-homepage:
+repository: https://github.com/CitizenOneX/image_mlkit_converter
 
 environment:
   sdk: '>=3.4.4 <4.0.0'
